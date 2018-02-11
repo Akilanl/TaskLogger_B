@@ -15,7 +15,9 @@ namespace TaskLogger_B.Model
         [DataMember]
         public int Task { get; set; }
         [DataMember]
-        public string Name { get; set; }
+        public string TaskName { get; set; }
+        [DataMember]
+        public string TaskNo { get; set; }
         [DataMember]
         public string WorkDone { get; set; }
         [DataMember]

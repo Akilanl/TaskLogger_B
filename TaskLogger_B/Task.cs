@@ -32,16 +32,37 @@ namespace TaskLogger_B
         }
 
         // GET api/<controller>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet]
+        public List<Master> Get(List<SearchModel> searchobj)
         {
-            return "value";
+            string querystring = "select * from Master";
+            foreach (SearchModel data in searchobj)
+            {
+                dynamic searchvalue = string.Empty;
+                if (data.FieldName.ToLower() == "ofdate" || data.FieldName.ToLower() == "modifieddate")
+                    searchvalue = Convert.ToDateTime(data.SearchValue);
+                if (data.FieldName.ToLower() == "task" || data.FieldName.ToLower() == "userid")
+                    searchvalue = Convert.ToInt32(data.SearchValue);
+                if (data.FieldName.ToLower() == "hoursspent")
+                    searchvalue = Convert.ToDouble(data.SearchValue);
+                if (data.ExactlyMatch == true)
+                    querystring += "&&" + data.FieldName + "=" + searchvalue;
+                else
+                    querystring += "&&" + data.FieldName + "LIKE" + "'%" + searchvalue + "%'";
+            }
+            var res = db.Query<Master>(querystring);
+            return res;
         }
 
         // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody]string value)
+        public IActionResult Post([FromBody]List<Master> tasksobj)
         {
+            if (tasksobj != null)
+            {
+                var res = db.InsertAll(tasksobj);
+            }
+            return Ok();
         }
 
         // PUT api/<controller>/5
